@@ -4,23 +4,50 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import Header from '../components/Header'
 import EpisodeCard from '../components/EpisodeCard'
 import globalStyle from '../styles/globalStyle'
+import PageNav from '../components/PageNav'
 import axios from 'axios'
 
 export default function HomeScreen() {
     const [loading, setLoading] = useState(true)
     const [page, setPage] = useState(1)
     const [list, setList] = useState([])
+    const [lastPage, setLastPage] = useState(300)
 
     useEffect(() => {
         setLoading(true)
         axios.get(`https://animepahe.com/api?m=airing&l=12&page=${page}`)
         .then(res => {
+            setLastPage(res.data.last_page)
             setList(res.data.data)
-            //console.log(res.data.data)
             setLoading(false)
         })
         .catch(err => console.log(err))
     }, [page])
+
+    const start = () => {
+        if (page !== 1) {
+            setPage(1)
+        }   
+    }
+
+    const next = () => {
+        if (page < lastPage) {
+            setPage((page) => page + 1)
+        }
+    }
+
+    const prev = () => {
+        if (page > 1) {
+            setPage((page) => page - 1)
+        }
+    }
+
+    const end = () => {
+        if (page !== lastPage) {
+            setPage(lastPage)
+        }
+    }
+
     return (
         <View style={globalStyle.container}>
             <Header/>
@@ -30,19 +57,19 @@ export default function HomeScreen() {
                 ):(
                     <View style={{flex:1}}>
                         <Text style={{...styles.text, ...styles.title}}>Latest Releases</Text>
-                        <ScrollView style={styles.episodeList}>
+                        <ScrollView style={styles.episodeList} contentContainerStyle={styles.scrollContainer}>
                         {
-                                list.map(item => (
-                                    <EpisodeCard
-                                        key={item.id}
-                                        fansub={item.fansub}
-                                        title={item.anime_title}
-                                        episode={item.episode}
-                                        snapshot={item.snapshot}
-                                    />
-                                ))
+                            list.map(item => (
+                                <EpisodeCard
+                                    key={item.id}
+                                    fansub={item.fansub}
+                                    title={item.anime_title}
+                                    episode={item.episode}
+                                    snapshot={item.snapshot}
+                                />
+                            ))
                         }
-                        <Text style={{color: 'white'}}>helo</Text>
+                        <PageNav start={start} next={next} page={page} prev={prev} end={end}/>
                         </ScrollView>
                     </View>
                 )}
@@ -61,6 +88,9 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     episodeList: {
-        flex: 1
+        flex: 1,
+    },
+    scrollContainer: {
+        alignItems: 'center',
     }
 })
