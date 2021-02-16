@@ -1,8 +1,5 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native'
-import {
-    DrawerItemList,
-  } from '@react-navigation/drawer';
 
 export default function Drawer(props) {
     return (
@@ -12,13 +9,18 @@ export default function Drawer(props) {
                 <Text style={{...styles.headerText, color: '#D5015B'}}>pahe</Text>
             </View>
             <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText} onPress={() => props.navigation.navigate('Home')}>Home</Text>
+                <Text
+                    style={styles.buttonText}
+                    onPress={() => props.navigation.navigate('Home')}>
+                    Home
+                </Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText} onPress={() => props.navigation.navigate('Search Anime')}>Search Anime</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText} onPress={() => props.navigation.navigate('Index')}>Index</Text>
+                <Text
+                    style={styles.buttonText}
+                    onPress={() => props.navigation.navigate('SearchNavigator', { screen: 'SearchScreen' })}>
+                    Search Anime
+                </Text>
             </TouchableOpacity>
         </ScrollView>
     )

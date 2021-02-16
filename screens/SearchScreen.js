@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar';
-import { View, FlatList, StyleSheet, TextInput, TouchableOpacity } from 'react-native'
+import { View, FlatList, StyleSheet, TextInput, TouchableOpacity, Button} from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 import Header from '../components/Header'
 import globalStyle from '../styles/globalStyle'
 import axios from 'axios'
 import AnimeTitle from '../components/AnimeTitle'
 
-export default function SearchScreen() {
+export default function SearchScreen({ navigation }) {
     const [text, setText] = useState('sadas')
     const [list, setList] = useState([])
 
@@ -43,15 +43,17 @@ export default function SearchScreen() {
                         style={{flex:1}}
                         data={list}
                         renderItem={({item}) => (
-                            <AnimeTitle
-                                image={item.poster}
-                                title={item.title}
-                                type={item.type}
-                                episodes={item.episodes}
-                                status={item.status}
-                                season={item.season}
-                                year={item.year}
-                            />
+                            <TouchableOpacity onPress={() => navigation.navigate('AnimeScreen', { session: item.session, id: item.id })}>
+                                <AnimeTitle
+                                    image={item.poster}
+                                    title={item.title}
+                                    type={item.type}
+                                    episodes={item.episodes}
+                                    status={item.status}
+                                    season={item.season}
+                                    year={item.year}
+                                />
+                            </TouchableOpacity>
                         )}
                         keyExtractor={item => item.id.toString()}
                     />
