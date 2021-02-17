@@ -1,14 +1,29 @@
-import React from 'react'
-import { Text, ImageBackground, StyleSheet } from 'react-native'
-
-export default function EpisodeCard({ fansub ,title, snapshot, episode, duration=null }) {
+import React, { useState, useEffect } from 'react'
+import { Text, ImageBackground, StyleSheet, Modal, TouchableHighlight, View, Button } from 'react-native'
+import axios from 'axios'
+import { useNavigation } from '@react-navigation/native';
+export default function EpisodeCard({ fansub ,title, snapshot, episode, duration=null, animeId, session }) {
+    const navigation = useNavigation();
     let text = ""
-    if (duration !== null) {
+    if (duration === null) {
         text = `[${fansub}] ${title}`
     }
+
+    const [modalOpen, setModalOpen] = useState(false)
+    const [links, setLinks] = useState([])
+
+    useEffect(() => {
+        axios.get(`https://animepahe.com/api?m=links&id=${animeId}&session=${session}&p=kwik`)
+        .then(res => {
+            setLinks(res.data.data)
+        })
+        .catch(err => console.log(err))
+    })
     
     return (
-        <ImageBackground
+        <View style={styles.imageBackground}>
+        <TouchableHighlight  onPress={() => setModalOpen(!modalOpen)}>
+            <ImageBackground
             source={{
                 uri: snapshot
             }}
@@ -36,10 +51,37 @@ export default function EpisodeCard({ fansub ,title, snapshot, episode, duration
             )}
             
             <Text
-                style={{...styles.text, right: 6, width: 25 }}>
+                style={{...styles.text, right: 6, width: 25, textAlign: 'center' }}>
                 { episode }
             </Text>
         </ImageBackground>
+        </TouchableHighlight>
+        {modalOpen && (
+            <Modal onRequestClose={() => setModalOpen(false)} >
+                <View style={styles.downloadModal}>
+                <Text style={{color: 'white', fontSize: 20, marginBottom: 40}}>Select Resolution</Text>
+                {links.map(link => {
+                    let res = Object.keys(link)
+                    return (
+                        <View style={{ marginVertical: 10 }} key={link[res[0]].id}>
+                            <Button
+                                title={res[0] + 'p - dub(' + link[res[0]].audio + ') '
+                                    + Math.ceil(link[res[0]].filesize / 1000000) + 'MB'
+                                }
+                                color='#D5015B'
+                                onPress={() => {
+                                    setModalOpen(false)
+                                    navigation.navigate('HomeNavigator', { screen: 'WebViewScreen', params: { link: link[res[0]].kwik_adfly }})}
+                                }
+                            />
+                        </View>
+                    )
+                })}
+                <Text style={{color: 'grey', fontSize: 13, marginTop: 20}}>Tip: Wait for the page to load and don't click on ads.</Text>
+                </View>
+            </Modal>
+        )}
+        </View>
     )
 }
 
@@ -57,8 +99,18 @@ const styles = StyleSheet.create({
         color: 'white',
         position: 'absolute',
         bottom: 5,
-        fontSize: 18,
+        fontSize: 14,
         flex: 1,
-        width: 240
+        width: 240,
+    },
+    downloadModal: {
+        backgroundColor: 'black',
+        flex: 1,
+        padding: 30,
+        alignItems: 'center'
+    },
+    downloadButton: {
+        color: '#D5015B',
+        width: 100
     }
 })

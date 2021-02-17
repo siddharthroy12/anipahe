@@ -66,6 +66,8 @@ export default function HomeScreen() {
                                     title={item.anime_title}
                                     episode={item.episode}
                                     snapshot={item.snapshot}
+                                    animeId={item.anime_id}
+                                    session={item.session}
                                 />
                             ))
                         }

@@ -137,6 +137,8 @@ export default function AnimeScreen({ route, navigation }) {
                                 episode={episode.episode}
                                 snapshot={episode.snapshot}
                                 duration={episode.duration}
+                                animeId={episode.anime_id}
+                                session={episode.session}
                             />
                         ))}
                         <View style={{alignItems:'center'}}>

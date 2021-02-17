@@ -11,7 +11,7 @@ export default function Drawer(props) {
             <TouchableOpacity style={styles.button}>
                 <Text
                     style={styles.buttonText}
-                    onPress={() => props.navigation.navigate('Home')}>
+                    onPress={() => props.navigation.navigate('HomeNavigator', { screen: 'HomeScreen' })}>
                     Home
                 </Text>
             </TouchableOpacity>
