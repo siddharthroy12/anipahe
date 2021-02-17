@@ -1,8 +1,12 @@
 import React from 'react'
 import { Text, ImageBackground, StyleSheet } from 'react-native'
 
-export default function EpisodeCard({ fansub ,title, snapshot, episode }) {
-    const text = `[${fansub}] ${title}`
+export default function EpisodeCard({ fansub ,title, snapshot, episode, duration=null }) {
+    let text = ""
+    if (duration !== null) {
+        text = `[${fansub}] ${title}`
+    }
+    
     return (
         <ImageBackground
             source={{
@@ -10,11 +14,27 @@ export default function EpisodeCard({ fansub ,title, snapshot, episode }) {
             }}
             style={styles.imageBackground}
             imageStyle={styles.image}>
-            <Text
-                style={{...styles.text, left: 6}}
-                numberOfLines={1}>
-                {text}
-            </Text>
+            {duration ? (
+                <Text
+                    style={{
+                        color: 'white',
+                        position: 'absolute',
+                        bottom: 5,
+                        fontSize: 13,
+                        left: 6,
+                        backgroundColor: 'black',
+                        paddingHorizontal: 4
+                    }}>
+                    {duration}
+                </Text>
+            ) : (
+                <Text
+                    style={{...styles.text, left: 6}}
+                    numberOfLines={1}>
+                    {text}
+                </Text>
+            )}
+            
             <Text
                 style={{...styles.text, right: 6, width: 25 }}>
                 { episode }
@@ -37,7 +57,7 @@ const styles = StyleSheet.create({
         color: 'white',
         position: 'absolute',
         bottom: 5,
-        fontSize: 13,
+        fontSize: 18,
         flex: 1,
         width: 240
     }
