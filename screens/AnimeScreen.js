@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Image, ScrollView, ActivityIndicator, ActivityIndicatorBase } from 'react-native'
 import Header from '../components/Header'
 import PageNav from '../components/PageNav'
 import EpisodeCard from '../components/EpisodeCard'
@@ -21,7 +21,10 @@ export default function AnimeScreen({ route, navigation }) {
 
     useEffect(() => {
         setLoading(true)
-        axios.get(`https://animepahe.com/anime/${route.params.session}`)
+        const cancelTokenSource = axios.CancelToken.source();
+        axios.get(`https://animepahe.com/anime/${route.params.session}`,{
+            cancelToken: cancelTokenSource.token
+        })
         .then(res => {
             let soup = new JSSoup(res.data)
             let titleWrapper = soup.find('div', 'title-wrapper')
@@ -67,19 +70,31 @@ export default function AnimeScreen({ route, navigation }) {
             setDesc(desc.text)
             setLoading(false)
         })
-        .catch(err => console.log(err))
+        .catch(err => {})
+        
+        return () => {
+            cancelTokenSource.cancel()
+        }
     }, [])
 
 
     useEffect(() => {
         setEpisodesLoading(true)
-        axios.get(`https://animepahe.com/api?m=release&id=${route.params.id}&l=30&sort=episode_desc&page=${page}`)
+        const cancelTokenSource = axios.CancelToken.source();
+        axios.get(`https://animepahe.com/api?m=release&id=${route.params.id}&l=30&sort=episode_desc&page=${page}`,
+        {
+            cancelToken: cancelTokenSource.token
+        })
         .then(res => {
             setEpisodes(res.data.data)
             setPages(res.data.last_page)
             setEpisodesLoading(false)
         })
-        .catch(err => console.log(err))
+        .catch(err => {})
+
+        return () => {
+            cancelTokenSource.cancel()
+        }
     },[page])
 
     const start = () => {
@@ -111,7 +126,9 @@ export default function AnimeScreen({ route, navigation }) {
             <Header title="Anime"/>
             <View style={globalStyle.content}>
                 {loading ? (
-                    <Text style={styles.title}>Loading</Text>
+                    <View style={{ flex: 1, justifyContent: 'center' }}>
+                        <ActivityIndicator color="white" size={50}/>
+                    </View>
                 ): (
                     <ScrollView style={styles.content}>
                         <View style={styles.banner}>

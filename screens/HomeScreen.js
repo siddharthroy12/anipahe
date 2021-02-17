@@ -15,13 +15,20 @@ export default function HomeScreen() {
 
     useEffect(() => {
         setLoading(true)
-        axios.get(`https://animepahe.com/api?m=airing&l=12&page=${page}`)
+        const cancelTokenSource = axios.CancelToken.source();
+        axios.get(`https://animepahe.com/api?m=airing&l=12&page=${page}`,{
+            cancelToken: cancelTokenSource.token
+        })
         .then(res => {
             setLastPage(res.data.last_page)
             setList(res.data.data)
             setLoading(false)
         })
-        .catch(err => console.log(err))
+        .catch(err => {})
+
+        return () => {
+            cancelTokenSource.cancel()
+        }
     }, [page])
 
     const start = () => {

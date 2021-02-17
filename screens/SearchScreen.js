@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar';
-import { View, FlatList, StyleSheet, TextInput, TouchableOpacity, Button} from 'react-native'
+import { View, FlatList, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator} from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 import Header from '../components/Header'
 import globalStyle from '../styles/globalStyle'
@@ -10,14 +10,16 @@ import AnimeTitle from '../components/AnimeTitle'
 export default function SearchScreen({ navigation }) {
     const [text, setText] = useState('sadas')
     const [list, setList] = useState([])
+    const [loading, setLoading] = useState(false)
 
     const search = async () => {
+        setLoading(true)
         try {
             const res = await axios.get(`https://animepahe.com/api?m=search&l=8&q=${text}`)
             setList(res.data.data)
         } catch(e) {
-            console.log(e)
         }
+        setLoading(false)
     }
 
     return (
@@ -39,24 +41,30 @@ export default function SearchScreen({ navigation }) {
                             />
                         </TouchableOpacity>
                     </View>
-                    <FlatList
-                        style={{flex:1}}
-                        data={list}
-                        renderItem={({item}) => (
-                            <TouchableOpacity onPress={() => navigation.navigate('AnimeScreen', { session: item.session, id: item.id })}>
-                                <AnimeTitle
-                                    image={item.poster}
-                                    title={item.title}
-                                    type={item.type}
-                                    episodes={item.episodes}
-                                    status={item.status}
-                                    season={item.season}
-                                    year={item.year}
-                                />
-                            </TouchableOpacity>
-                        )}
-                        keyExtractor={item => item.id.toString()}
-                    />
+                    {loading ? (
+                        <View style={{marginTop: 40}}>
+                            <ActivityIndicator color="white" size={50}/>
+                        </View>
+                    ): (
+                        <FlatList
+                            style={{flex:1}}
+                            data={list}
+                            renderItem={({item}) => (
+                                <TouchableOpacity onPress={() => navigation.navigate('AnimeScreen', { session: item.session, id: item.id })}>
+                                    <AnimeTitle
+                                        image={item.poster}
+                                        title={item.title}
+                                        type={item.type}
+                                        episodes={item.episodes}
+                                        status={item.status}
+                                        season={item.season}
+                                        year={item.year}
+                                    />
+                                </TouchableOpacity>
+                            )}
+                            keyExtractor={item => item.id.toString()}
+                        />
+                    )}
                 </View>
             <StatusBar style='dark'/>
         </View>

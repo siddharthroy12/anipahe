@@ -13,12 +13,17 @@ export default function EpisodeCard({ fansub ,title, snapshot, episode, duration
     const [links, setLinks] = useState([])
 
     useEffect(() => {
-        axios.get(`https://animepahe.com/api?m=links&id=${animeId}&session=${session}&p=kwik`)
+        const cancelTokenSource = axios.CancelToken.source();
+        axios.get(`https://animepahe.com/api?m=links&id=${animeId}&session=${session}&p=kwik`,
+        { cancelToken: cancelTokenSource.token })
         .then(res => {
             setLinks(res.data.data)
         })
-        .catch(err => console.log(err))
-    })
+        .catch(err => {})
+        return () => {
+            cancelTokenSource.cancel();
+        }
+    },[])
     
     return (
         <View style={styles.imageBackground}>

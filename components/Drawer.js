@@ -22,6 +22,13 @@ export default function Drawer(props) {
                     Search Anime
                 </Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.button}>
+                <Text
+                    style={styles.buttonText}
+                    onPress={() => props.navigation.navigate('AboutScreen')}>
+                    About
+                </Text>
+            </TouchableOpacity>
         </ScrollView>
     )
 }
