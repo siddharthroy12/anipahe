@@ -1,4 +1,7 @@
-title: "anipahe"
+title: anipahe
 description: "An unofficial client of animepahe"
 theme: jekyll-theme-midnight
-show_downloads: "true"
+show_downloads: true
+github:
+  apk_url: https://github.com/siddharthroy12/anipahe/releases/download/v1.0.0/app-armeabi-v7a-release.apk
+  src_url: https://github.com/siddharthroy12/anipahe
